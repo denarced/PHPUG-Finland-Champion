@@ -1,0 +1,7 @@
+# Directories
+target/
+.idea/
+
+# File patterns
+*.swp
+*.iml
