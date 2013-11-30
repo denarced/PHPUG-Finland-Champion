@@ -13,8 +13,8 @@ class OpeningHoursTest {
         // SETUP SUT
         val hours = "Ma-Ti 09:00-11:00 ja 12:00-18:00"
         val hoursList: List[(DateTime, DateTime)] = List(
-            createTimeRange(9, 11),
-            createTimeRange(12, 18))
+            TestUtil.createTimeRange(9, 11),
+            TestUtil.createTimeRange(12, 18))
         val hoursMap: Map[Weekday, List[(DateTime, DateTime)]] = Map(
             Weekday.Ma -> hoursList,
             Weekday.Ti -> hoursList)
@@ -26,7 +26,7 @@ class OpeningHoursTest {
     def testBasicHours(): Unit = {
         // SETUP SUT
         val hours = "Ma-Ke 09:00-19:00"
-        val hoursList: List[(DateTime, DateTime)] = List(createTimeRange(9, 19))
+        val hoursList: List[(DateTime, DateTime)] = List(TestUtil.createTimeRange(9, 19))
         val hoursMap: Map[Weekday, List[(DateTime, DateTime)]] = Map(
             Weekday.Ma -> hoursList,
             Weekday.Ti -> hoursList,
@@ -39,8 +39,10 @@ class OpeningHoursTest {
     def testSeparateWeekdayHours(): Unit = {
         // SETUP SUT
         val hours = "Ma-Ti 10:00-19:00, Pe 10:00-16:00"
-        val monTueHours: List[(DateTime, DateTime)] = List(createTimeRange(10, 19))
-        val fridayHours: List[(DateTime, DateTime)] = List(createTimeRange(10, 16))
+        val monTueHours: List[(DateTime, DateTime)] =
+            List(TestUtil.createTimeRange(10, 19))
+        val fridayHours: List[(DateTime, DateTime)] =
+            List(TestUtil.createTimeRange(10, 16))
         val hoursMap: Map[Weekday, List[(DateTime, DateTime)]] = Map(
             Weekday.Ma -> monTueHours,
             Weekday.Ti -> monTueHours,
@@ -59,10 +61,5 @@ class OpeningHoursTest {
 
         // VERIFY
         Assert.assertEquals(expected, actual)
-    }
-
-    def createTimeRange(startHour: Int, endHour: Int): (DateTime, DateTime) = {
-        val base = new DateTime(1970, 1, 1, 0, 0)
-        (base.withHourOfDay(startHour), base.withHourOfDay(endHour))
     }
 }

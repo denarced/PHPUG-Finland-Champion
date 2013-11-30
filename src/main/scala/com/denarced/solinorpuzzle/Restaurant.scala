@@ -1,15 +1,26 @@
 package com.denarced.solinorpuzzle
 
-import java.io.InputStream
 import scala.io.BufferedSource
-import com.denarced.solinorpuzzle.Weekday.Weekday
-import org.joda.time.DateTime
+import org.joda.time.{Minutes, DateTime}
 import scala.util.matching.Regex
 import com.denarced.solinorpuzzle.Weekday.Weekday
 
 class Restaurant(
     val name: String,
     val openingHours: Map[Weekday, List[(DateTime, DateTime)]]) {
+
+    /**
+     * Calculate the number of minutes that the restaurant is open during a week.
+     */
+    def openDuringWeek: Int = {
+        openingHours.values.foldLeft(0) {(minutes, each) =>
+            each.foldLeft(0) {(weekdayMinutes, timeRange) =>
+                val mins: Minutes =
+                    Minutes.minutesBetween(timeRange._1, timeRange._2)
+                mins.getMinutes + weekdayMinutes
+            } + minutes
+        }
+    }
 }
 
 object Restaurant {

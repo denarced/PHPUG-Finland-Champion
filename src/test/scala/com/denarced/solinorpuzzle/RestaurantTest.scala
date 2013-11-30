@@ -4,11 +4,8 @@ import org.junit.Assert
 import org.junit.Test
 import scala.io.BufferedSource
 import java.io.ByteArrayInputStream
-import java.nio.charset.Charset
-import java.text.{SimpleDateFormat, MessageFormat}
-import java.util.Date
-import org.joda.time.{Minutes, DateTime}
-import com.denarced.solinorpuzzle.Weekday.Weekday
+import java.text.MessageFormat
+import org.joda.time.{Interval, DateTime}
 
 class RestaurantTest {
     @Test
@@ -24,6 +21,57 @@ class RestaurantTest {
 
         // VERIFY
         Assert.assertEquals(name, restaurantList.head.name)
+    }
+
+    @Test
+    def testOpenDuringWeek(): Unit = {
+        // SETUP SUT
+        val baseDateTime = new DateTime(1970, 1, 1, 0, 0)
+        val startHour = 9
+        val endHour = 17
+        val restaurant = new Restaurant(
+            "godlike",
+            Map(Weekday.Ma ->
+                List(TestUtil.createTimeRange(startHour, endHour))))
+
+        // EXERCISE
+        val minuteCount = restaurant.openDuringWeek
+
+        // VERIFY
+        Assert.assertEquals((endHour - startHour) * 60, minuteCount)
+    }
+
+    @Test
+    def testOpenDuringWeekWithSplitOpeningHours(): Unit = {
+        // SETUP SUT
+        val hourList: List[(Int, Int)] = List((9, 11), (12, 18))
+        val hourMap = hourList.foldLeft(
+            Map.empty[Weekday.Weekday, List[(DateTime, DateTime)]]) {(map, each) =>
+
+            val newTimeRangeList: List[(DateTime, DateTime)] =
+                List(TestUtil.createTimeRange(each._1, each._2))
+            val list: List[(DateTime, DateTime)] =
+                newTimeRangeList ++ map.getOrElse(Weekday.Ma, List.empty)
+
+            map + (Weekday.Ma -> list)
+        }
+        val restaurant = new Restaurant("something", hourMap)
+
+        // EXERCISE
+        val minuteCount = restaurant.openDuringWeek
+
+        // VERIFY
+        val hourCount = hourList.foldLeft(0) {(total, each) =>
+            total + (each._2 - each._1)
+        }
+        Assert.assertEquals(hourCount * 60, minuteCount)
+    }
+
+    @Test
+    def testInterval() {
+        val base = new DateTime(1970, 1, 1, 0, 0)
+        val interval = new Interval(base.withHourOfDay(9), base.withHourOfDay(18))
+        println(interval.toDuration.toStandardMinutes.getMinutes)
     }
 
     def createCsvRecord(name: String, hours: String): String = {
