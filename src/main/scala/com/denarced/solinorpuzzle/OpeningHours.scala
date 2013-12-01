@@ -1,6 +1,6 @@
 package com.denarced.solinorpuzzle
 
-import org.joda.time.DateTime
+import org.joda.time.{Interval, DateTime}
 import org.apache.commons.lang.StringUtils
 import scala.collection.mutable
 import com.denarced.solinorpuzzle.Weekday.Weekday
@@ -10,13 +10,13 @@ import java.text.SimpleDateFormat
  * @author denarced
  */
 class OpeningHours() {
-    private val hours: mutable.Map[Weekday, List[(DateTime, DateTime)]] =
-        Weekday.values.foldLeft(mutable.Map.empty[Weekday, List[(DateTime, DateTime)]]) {(map, each) =>
+    private val hours: mutable.Map[Weekday, List[Interval]] =
+        Weekday.values.foldLeft(mutable.Map.empty[Weekday, List[Interval]]) {(map, each) =>
             map + (each -> List.empty)
         }
     private val timeRangePattern = """(\d\d:\d\d)-(\d\d:\d\d)""".r
     private val andPattern = """ja""".r
-    private var timeRangeStack: List[(DateTime, DateTime)] = List.empty
+    private var intervalStack: List[Interval] = List.empty
 
     private val dateFormat = new SimpleDateFormat("HH:mm")
 
@@ -29,16 +29,16 @@ class OpeningHours() {
      */
     def process(token: String): Unit = token match {
         case timeRangePattern(start: String, end: String) =>
-            timeRangeStack = createTimeRange(start, end) :: timeRangeStack
-        case andPattern() => assert(!timeRangeStack.isEmpty)
+            intervalStack = createInterval(start, end) :: intervalStack
+        case andPattern() => assert(!intervalStack.isEmpty)
         case _ => finish(token)
     }
 
-    private def createTimeRange(start: String, end: String): (DateTime, DateTime) = {
+    private def createInterval(start: String, end: String): Interval = {
         val alpha = new DateTime(dateFormat.parse(start))
         val omega = new DateTime(dateFormat.parse(end))
 
-        (alpha, omega)
+        new Interval(alpha, omega)
     }
 
     /**
@@ -55,9 +55,9 @@ class OpeningHours() {
             List(Weekday.withName(weekdayToken))
         }
         days.foreach {each =>
-            hours(each) = timeRangeStack
+            hours(each) = intervalStack
         }
-        timeRangeStack = List.empty
+        intervalStack = List.empty
     }
 
 
@@ -67,8 +67,8 @@ class OpeningHours() {
      *
      * @return the always non null map.
      */
-    def openingHours: Map[Weekday, List[(DateTime, DateTime)]] = {
-        hours.filter {entry =>
+    def openingHours: Map[Weekday, List[Interval]] = {
+        hours.filter {entry: (Weekday.Weekday, List[Interval]) =>
             !entry._2.isEmpty
         }.toMap
     }
@@ -82,13 +82,9 @@ object OpeningHours {
      * restaurant's opening hours. Must start with weekday definition and end
      * with time range.
      * @return map of opening hours where keys are the weekdays and values are
-     * time periods; the first tuple value defines the inclusive time when the
-     * restaurant opens and the second defines the inclusive time when the
-     * restaurant closes.
+     * time periods.
      */
-    def parse(hours: String):
-        Map[Weekday, List[(DateTime, DateTime)]] = {
-
+    def parse(hours: String): Map[Weekday, List[Interval]] = {
         val context = new OpeningHours()
         val trimmedAndNonEmptyTokens = StringUtils.split(hours, ", ")
         trimmedAndNonEmptyTokens.reverse.foreach {each =>

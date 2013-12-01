@@ -32,7 +32,7 @@ class RestaurantTest {
         val restaurant = new Restaurant(
             "godlike",
             Map(Weekday.Ma ->
-                List(TestUtil.createTimeRange(startHour, endHour))))
+                List(TestUtil.createInterval(startHour, endHour))))
 
         // EXERCISE
         val minuteCount = restaurant.openDuringWeek
@@ -46,12 +46,12 @@ class RestaurantTest {
         // SETUP SUT
         val hourList: List[(Int, Int)] = List((9, 11), (12, 18))
         val hourMap = hourList.foldLeft(
-            Map.empty[Weekday.Weekday, List[(DateTime, DateTime)]]) {(map, each) =>
+            Map.empty[Weekday.Weekday, List[Interval]]) {(map, each) =>
 
-            val newTimeRangeList: List[(DateTime, DateTime)] =
-                List(TestUtil.createTimeRange(each._1, each._2))
-            val list: List[(DateTime, DateTime)] =
-                newTimeRangeList ++ map.getOrElse(Weekday.Ma, List.empty)
+            val newIntervalList: List[Interval] =
+                List(TestUtil.createInterval(each._1, each._2))
+            val list: List[Interval] =
+                newIntervalList ++ map.getOrElse(Weekday.Ma, List.empty)
 
             map + (Weekday.Ma -> list)
         }

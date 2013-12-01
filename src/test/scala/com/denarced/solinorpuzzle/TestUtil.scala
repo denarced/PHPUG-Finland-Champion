@@ -1,13 +1,13 @@
 package com.denarced.solinorpuzzle
 
-import org.joda.time.DateTime
+import org.joda.time.{Interval, DateTime}
 
 /**
  * @author denarced
  */
 object TestUtil {
-    def createTimeRange(startHour: Int, endHour: Int): (DateTime, DateTime) = {
+    def createInterval(startHour: Int, endHour: Int): Interval = {
         val base = new DateTime(1970, 1, 1, 0, 0)
-        (base.withHourOfDay(startHour), base.withHourOfDay(endHour))
+        new Interval(base.withHourOfDay(startHour), base.withHourOfDay(endHour))
     }
 }
