@@ -1,6 +1,5 @@
 package com.denarced.solinorpuzzle
 
-import sun.security.provider.Sun
 
 /**
  * @author denarced

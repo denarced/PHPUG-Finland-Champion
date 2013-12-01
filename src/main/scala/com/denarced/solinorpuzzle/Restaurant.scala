@@ -1,9 +1,10 @@
 package com.denarced.solinorpuzzle
 
 import scala.io.BufferedSource
-import org.joda.time.{Interval, Minutes, DateTime}
+import org.joda.time.{Interval, Minutes}
 import scala.util.matching.Regex
 import com.denarced.solinorpuzzle.Weekday.Weekday
+import org.apache.commons.lang3.builder.ToStringBuilder
 
 class Restaurant(
     val name: String,
@@ -19,6 +20,13 @@ class Restaurant(
                 mins.getMinutes + weekdayMinutes
             } + minutes
         }
+    }
+
+    override def toString: String = {
+        new ToStringBuilder(this)
+            .append("name", name)
+            .append("openingHours", openingHours)
+            .toString
     }
 }
 

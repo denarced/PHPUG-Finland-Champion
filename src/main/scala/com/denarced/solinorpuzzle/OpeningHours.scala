@@ -1,10 +1,10 @@
 package com.denarced.solinorpuzzle
 
 import org.joda.time.{Interval, DateTime}
-import org.apache.commons.lang.StringUtils
 import scala.collection.mutable
 import com.denarced.solinorpuzzle.Weekday.Weekday
 import java.text.SimpleDateFormat
+import org.apache.commons.lang3.StringUtils
 
 /**
  * @author denarced

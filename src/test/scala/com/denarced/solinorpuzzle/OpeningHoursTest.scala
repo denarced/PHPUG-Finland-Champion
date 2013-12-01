@@ -1,7 +1,7 @@
 package com.denarced.solinorpuzzle
 
 import org.junit.{Assert, Test}
-import org.joda.time.{Interval, DateTime}
+import org.joda.time.Interval
 import com.denarced.solinorpuzzle.Weekday.Weekday
 
 /**

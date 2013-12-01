@@ -5,7 +5,7 @@ import org.junit.Test
 import scala.io.BufferedSource
 import java.io.ByteArrayInputStream
 import java.text.MessageFormat
-import org.joda.time.{Interval, DateTime}
+import org.joda.time.Interval
 
 class RestaurantTest {
     @Test
@@ -26,7 +26,6 @@ class RestaurantTest {
     @Test
     def testOpenDuringWeek(): Unit = {
         // SETUP SUT
-        val baseDateTime = new DateTime(1970, 1, 1, 0, 0)
         val startHour = 9
         val endHour = 17
         val restaurant = new Restaurant(
@@ -65,13 +64,6 @@ class RestaurantTest {
             total + (each._2 - each._1)
         }
         Assert.assertEquals(hourCount * 60, minuteCount)
-    }
-
-    @Test
-    def testInterval() {
-        val base = new DateTime(1970, 1, 1, 0, 0)
-        val interval = new Interval(base.withHourOfDay(9), base.withHourOfDay(18))
-        println(interval.toDuration.toStandardMinutes.getMinutes)
     }
 
     def createCsvRecord(name: String, hours: String): String = {
